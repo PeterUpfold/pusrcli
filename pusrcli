@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+#
+# Command line query interface for PUStatusReporter
+#
+
+import json
+import sys
+import platform
+import os
+import argparse
+
+libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
+if os.path.exists(libdir):
+    sys.path.append(libdir)
+sys.path.append('/home/peter/.local/lib')
+
+from PUStatusReporter import reporter
+
+with open('volatile/config.json', 'r') as config_file:
+    config = json.load(config_file)
+
+parser = argparse.ArgumentParser(description='Command line query interface for PUStatusReporter.')
+parser.add_argument('action', type=str, help='the action to perform -- only \'show\' supported at this time')
+parser.add_argument('-c', type=str, default=None, required=False, help='A specific context to show')
+
+args = parser.parse_args()
+
+if args.action == 'show':
+    if args.c != None:
+        try:
+            response = reporter.get_status(args.c, config['bearer_key'])
+        except IOError as error:
+            print(error)
+            sys.exit(3)
+
+        print(response['payload'])
+    else:
+        contexts = reporter.get_contexts(config['bearer_key'])
+        for pair in contexts:
+            current_context = pair['name']
+            try:
+                response = reporter.get_status(current_context, config['bearer_key'])
+            except IOError as error:
+                print(error)
+
+            print(current_context)
+            print(response['payload'])
+
+            print()
+else:
+    print('Unknown action. Only \'show\' is supported at this time.')
+    sys.exit(2)
