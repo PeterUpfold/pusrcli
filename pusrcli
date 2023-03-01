@@ -16,7 +16,7 @@ sys.path.append('/home/peter/.local/lib')
 
 from PUStatusReporter import reporter
 
-with open('volatile/config.json', 'r') as config_file:
+with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'volatile', 'config.json'), 'r') as config_file:
     config = json.load(config_file)
 
 parser = argparse.ArgumentParser(description='Command line query interface for PUStatusReporter.')
@@ -24,6 +24,8 @@ parser.add_argument('action', type=str, help='the action to perform -- only \'sh
 parser.add_argument('-c', type=str, default=None, required=False, help='A specific context to show')
 
 args = parser.parse_args()
+
+#reporter.get_context('harald_le_fail', config['bearer_key'])
 
 if args.action == 'show':
     if args.c != None:
