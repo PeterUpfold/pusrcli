@@ -1,4 +1,5 @@
 {
 	"bearer_key": "",
-	"send_notification_script": ""
+	"send_notification_script": "",
+	"ping_target": "1.1.1.1"
 }
